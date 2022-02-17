@@ -18,6 +18,7 @@
                             <th scope="col">Titolo</th>
                             <th scope="col">Slug</th>
                             <th scope="col">Stato</th>
+                            <th scope="col">Categoria</th>
                             <th scope="col">Azioni</th>
                           </tr>
                         </thead>
@@ -33,6 +34,13 @@
                                 @else
                                     <span class="badge badge-secondary">Bozza</span>
                                 @endif
+                            </td>
+                            <td>
+                              @if ($post->category)
+                                  {{$post->category->name}}
+                              @else
+                                     Nessuna
+                              @endif
                             </td>
 
                             <td class="d-flex">

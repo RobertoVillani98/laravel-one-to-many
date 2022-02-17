@@ -6,13 +6,16 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Post;
+use App\Category;
+
 
 class PostController extends Controller
 {
     protected $validationRule = [
         "title" => "required|string|max:100",
         "content" => "required",
-        "published" => "sometimes|accepted"
+        "published" => "sometimes|accepted",
+        "category_id" => "nullable|exists:categories,id"
     ];
     /**
      * Display a listing of the resource.
@@ -30,9 +33,10 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Post $post)
+    public function create()
     {
-        return view("admin.posts.create");
+        $categories = Category::all();
+        return view("admin.posts.create", compact("categories"));
     }
 
     /**
@@ -50,8 +54,8 @@ class PostController extends Controller
         $newPost = new Post();
         $newPost->title = $data["title"];
         $newPost->content = $data["content"];
-
         $newPost->published = isset($data["published"]);
+        $newPost->category_id = $data["category_id"];
 
 
         $slug = Str::of($newPost->title)->slug("-");
@@ -89,7 +93,9 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        return view("admin.posts.edit", compact("post"));
+        $categories = Category::all();
+
+        return view("admin.posts.edit", compact("post", "categories"));
     }
 
     /**
@@ -123,7 +129,7 @@ class PostController extends Controller
         }
 
         $post->content = $data["content"];
-
+        $post->category_id = $data["category_id"];
         $post->published = isset($data["published"]);
 
         $post->save();

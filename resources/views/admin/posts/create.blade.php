@@ -10,7 +10,7 @@
                 </div>
 
                 <div class="card-body">
-                    <form action="{{route("posts.store")}}" method="POST">
+                    <form action="{{route("posts.store")}}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
                           <label for="title">Titolo</label>
@@ -39,6 +39,30 @@
                                 <div class="alert alert-danger">{{$message}}</div>
                               @enderror
                         </div>
+
+                        <div class="form-group mb-3">
+                            <img id="uploadPreview" width="100" src="https://via.placeholder.com/300x200">
+                            <label for="image">Aggiungi immagine</label>
+                            <input type="file" id="image" name="image" onchange="PreviewImage();">
+
+                            <script type="text/javascript">
+
+                                function PreviewImage() {
+                                    var oFReader = new FileReader();
+                                    oFReader.readAsDataURL(document.getElementById("image").files[0]);
+                            
+                                    oFReader.onload = function (oFREvent) {
+                                        document.getElementById("uploadPreview").src = oFREvent.target.result;
+                                    };
+                                };
+                            
+                            </script>
+
+
+                            @error('image')
+                                <div class="alert alert-danger">{{$message}}</div>
+                            @enderror 
+                        </div>
                        
                         <div class="form-group form-check">
                             <input type="checkbox" class="form-check-input @error('published') is-invalid @enderror" id="published" name="published" {{old("published") ? "checked" : ""}}>
@@ -47,8 +71,11 @@
                              <div class="alert alert-danger">{{$message}}</div>
                           @enderror
                         </div>
-                        <button type="submit" class="btn btn-primary">Crea</button>
+                        
+                          <button type="submit" class="btn btn-primary">Crea</button>
                          <a href="{{route('posts.index')}}" class="btn btn-primary ml-3">Torna ai posts</a>
+
+                         
                     </form>
                 </div>
     </div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 use App\Post;
 use App\Category;
 
@@ -15,7 +16,8 @@ class PostController extends Controller
         "title" => "required|string|max:100",
         "content" => "required",
         "published" => "sometimes|accepted",
-        "category_id" => "nullable|exists:categories,id"
+        "category_id" => "nullable|exists:categories,id",
+        "image" => "nullable|image|mimes:jpeg,bmp,png|max:2048"
     ];
     /**
      * Display a listing of the resource.
@@ -67,6 +69,13 @@ class PostController extends Controller
         }
 
         $newPost->slug = $slug;
+
+        //salvo img se è presente
+
+        if (isset($data["image"])) {
+            $path_image = Storage::put('uploads', $data['image']);
+            $newPost->image = $path_image;
+        }
 
         $newPost->save();
 
@@ -132,6 +141,13 @@ class PostController extends Controller
         $post->category_id = $data["category_id"];
         $post->published = isset($data["published"]);
 
+        if (isset($data["image"])) {
+
+            Storage::delete($post->image);
+            $path_image = Storage::put('uploads', $data['image']);
+            $post->image = $path_image;
+        }
+
         $post->save();
 
         return redirect()->route("posts.show", $post->id);
@@ -145,6 +161,10 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+
+        if ($post->image) {
+            Storage::delete($post->image);
+        }
         $post->delete();
 
         return redirect()->route('posts.index');

@@ -11,6 +11,12 @@
 
                 <div class="card-body">
                     <div class="mb-3">
+                        @if ($post->image)
+                            <img class="w-100 mx-auto d-block" src="{{asset("storage/{$post->image}")}}" alt="">
+                        @endif
+                    </div>
+                    
+                    <div class="mb-3">
                         <strong>Stato:</strong>
                         @if ($post->published)
                             <span class="badge badge-success">Pubblicato</span>
@@ -26,9 +32,11 @@
                         </div>
                     @endif
                     
-                    {{ $post->content }}
+                    <strong>Descrizione:</strong>
+                     {{ $post->content }}
                 </div>
             </div>
+            
             <div class="d-flex mt-3">
                 <a href="{{route('posts.edit', $post->id)}}"><button type="button" class="btn btn-warning">Modifica</button></a>
                 <form action="{{route('posts.destroy', $post->id)}}" method="POST">

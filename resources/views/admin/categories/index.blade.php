@@ -40,6 +40,7 @@
                           @endforeach
                         </tbody>
                       </table>
+                      <a href="{{route('posts.index')}}" class="btn btn-primary">Torna ai posts</a>
                 </div>
             </div>
         </div>

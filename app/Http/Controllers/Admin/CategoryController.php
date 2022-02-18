@@ -3,11 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Category;
 
+
 class CategoryController extends Controller
 {
+
+    protected $validationRule = [
+        "name" => "required|string|max:20|unique:categories,name"
+    ];
     /**
      * Display a listing of the resource.
      *
@@ -26,7 +32,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view("admin.categories.create");
     }
 
     /**
@@ -37,8 +43,18 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate($this->validationRule);
+
+        $data = $request->all();
+
+        $newCategory = new Category();
+        $newCategory->name = $data["name"];
+        $newCategory->slug = Str::of($newCategory->name)->slug("-");
+        $newCategory->save();
+
+        return redirect()->route("categories.index");
     }
+
 
     /**
      * Display the specified resource.
@@ -46,9 +62,9 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Category $category)
     {
-        //
+        return view("admin.categories.show", compact("category"));
     }
 
     /**
@@ -57,9 +73,9 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Category $category)
     {
-        //
+        return view("admin.categories.edit", compact("category"));
     }
 
     /**
@@ -69,9 +85,17 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Category $category)
     {
-        //
+        $request->validate($this->validationRule);
+
+        $data = $request->all();
+
+        $category->name = $data["name"];
+        $category->slug = Str::of($data["name"])->slug("-");
+        $category->save();
+
+        return redirect()->route("categories.index");
     }
 
     /**
@@ -80,8 +104,10 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Category $category)
     {
-        //
+        $category->delete();
+
+        return redirect()->route("categories.index");
     }
 }
